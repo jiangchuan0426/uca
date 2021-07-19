@@ -25,37 +25,35 @@ const (
 	tencentyunTypeD tencentyunType = 4
 )
 
-var _ ucaInternal = (*tencentyun)(nil)
+var _ ucaInternal = (*tencentyunInternal)(nil)
 
 type (
-	tencentyunType uint8
-	tencentyun     struct{}
+	tencentyunType     uint8
+	tencentyunInternal struct{}
 )
 
-func (t *tencentyun) sign(original url.URL, options *signOptions) (url url.URL, err error) {
+func (t *tencentyunInternal) sign(original *url.URL, options *signOptions) (err error) {
 	switch options.tencentType {
 	case tencentyunTypeA:
-		url, err = t.signA(original, options)
+		err = t.signA(original, options)
 	case tencentyunTypeB:
-		url, err = t.signB(original, options)
+		err = t.signB(original, options)
 	case tencentyunTypeC:
-		url, err = t.signC(original, options)
+		err = t.signC(original, options)
 	case tencentyunTypeD:
-		url, err = t.signD(original, options)
+		err = t.signD(original, options)
 	default:
-		url, err = t.signA(original, options)
+		err = t.signA(original, options)
 	}
 
 	return
 }
 
-func (t *tencentyun) signA(original url.URL, options *signOptions) (url url.URL, err error) {
+func (t *tencentyunInternal) signA(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Unix()
-	key := fmt.Sprintf(tencentyunSignPatternA, original.Path, now, xid.New().String(), options.secret.Key)
+	key := fmt.Sprintf(tencentyunSignPatternA, url.Path, now, xid.New().String(), options.key)
 
-	url = original
 	query := url.Query()
-
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
@@ -65,44 +63,41 @@ func (t *tencentyun) signA(original url.URL, options *signOptions) (url url.URL,
 	return
 }
 
-func (t *tencentyun) signB(original url.URL, options *signOptions) (url url.URL, err error) {
+func (t *tencentyunInternal) signB(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Format("20060102150405")
-	key := fmt.Sprintf(tencentyunSignPatternB, options.secret.Key, now, original.Path)
+	key := fmt.Sprintf(tencentyunSignPatternB, options.key, now, url.Path)
 
-	url = original
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
-	url.Path = fmt.Sprintf("%s%s%s", now, sign, original.Path)
+	url.Path = fmt.Sprintf("%s%s%s", now, sign, url.Path)
 
 	return
 }
 
-func (t *tencentyun) signC(original url.URL, options *signOptions) (url url.URL, err error) {
+func (t *tencentyunInternal) signC(url *url.URL, options *signOptions) (err error) {
 	now := strings.ToUpper(strconv.FormatInt(time.Now().Unix(), 16))
-	key := fmt.Sprintf(tencentyunSignPatternC, options.secret.Key, original.Path, now)
+	key := fmt.Sprintf(tencentyunSignPatternC, options.key, url.Path, now)
 
-	url = original
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
-	url.Path = fmt.Sprintf("%s%s%s", sign, now, original.Path)
+	url.Path = fmt.Sprintf("%s%s%s", sign, now, url.Path)
 
 	return
 }
 
-func (t *tencentyun) signD(original url.URL, options *signOptions) (url url.URL, err error) {
+func (t *tencentyunInternal) signD(url *url.URL, options *signOptions) (err error) {
 	now := strings.ToUpper(strconv.FormatInt(time.Now().Unix(), 16))
-	key := fmt.Sprintf(tencentyunSignPatternD, options.secret.Key, original.Path, now)
+	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.Path, now)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
 
-	url = original
 	query := url.Query()
 	query.Add(options.signParam, sign)
 	query.Add(options.timestampParam, now)

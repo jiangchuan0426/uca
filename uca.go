@@ -6,7 +6,7 @@ import (
 
 // Uca 统一CDN接口
 type Uca interface {
-	Sign(original url.URL, opts ...signOption) (url url.URL, err error)
+	Sign(url *url.URL, opts ...signOption) (err error)
 }
 
 // New 创建统一CDN接口
@@ -16,7 +16,7 @@ func New(opts ...option) Uca {
 	}
 
 	return &ucaTemplate{
-		changcache: &chuangcache{},
-		tencentyun: &tencentyun{},
+		changcache: &chuangcacheInternal{},
+		tencentyun: &tencentyunInternal{},
 	}
 }

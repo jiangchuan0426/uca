@@ -10,17 +10,15 @@ import (
 
 const chuangcacheSignPattern = "%s%s%d"
 
-var _ ucaInternal = (*chuangcache)(nil)
+var _ ucaInternal = (*chuangcacheInternal)(nil)
 
-type chuangcache struct{}
+type chuangcacheInternal struct{}
 
-func (c *chuangcache) sign(original url.URL, options *signOptions) (url url.URL, err error) {
+func (c *chuangcacheInternal) sign(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Unix()
-	key := fmt.Sprintf(chuangcacheSignPattern, options.secret.Key, original.Path, now)
+	key := fmt.Sprintf(chuangcacheSignPattern, options.key, url.Path, now)
 
-	url = original
 	query := url.Query()
-
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return

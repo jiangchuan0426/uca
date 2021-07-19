@@ -9,7 +9,7 @@ type ucaTemplate struct {
 	tencentyun ucaInternal
 }
 
-func (t *ucaTemplate) Sign(original url.URL, opts ...signOption) (url url.URL, err error) {
+func (t *ucaTemplate) Sign(url *url.URL, opts ...signOption) (err error) {
 	options := defaultSignOptions()
 	for _, opt := range opts {
 		opt.applySign(options)
@@ -17,9 +17,9 @@ func (t *ucaTemplate) Sign(original url.URL, opts ...signOption) (url url.URL, e
 
 	switch options.ucaType {
 	case TypeChuangcache:
-		url, err = t.changcache.sign(original, options)
+		err = t.changcache.sign(url, options)
 	case TypeTencentyun:
-		url, err = t.tencentyun.sign(original, options)
+		err = t.tencentyun.sign(url, options)
 	}
 
 	return

@@ -1,22 +1,26 @@
 package uca
 
-var _ signOption = (*optionUrl)(nil)
+var _ signOption = (*optionDomain)(nil)
 
-type optionUrl struct {
-	url string
+type optionDomain struct {
+	domain string
+	key    string
 }
 
-// Url 配置授权
-func Url(url string) *optionUrl {
-	return &optionUrl{
-		url: url,
+// Domain 配置授权
+func Domain(domain string, key string) *optionDomain {
+	return &optionDomain{
+		domain: domain,
+		key:    key,
 	}
 }
 
-func (u *optionUrl) applySign(options *signOptions) {
-	options.url = u.url
+func (u *optionDomain) applySign(options *signOptions) {
+	options.domain = u.domain
+	options.key = u.key
 }
 
-func (u *optionUrl) apply(options *options) {
-	options.url = u.url
+func (u *optionDomain) apply(options *options) {
+	options.domain = u.domain
+	options.key = u.key
 }
