@@ -1,7 +1,7 @@
 package uca
 
 type signOptions struct {
-	options
+	*options
 
 	tencentType    tencentyunType
 	signParam      string
@@ -10,6 +10,8 @@ type signOptions struct {
 
 func defaultSignOptions() *signOptions {
 	return &signOptions{
+		options: defaultOptions,
+
 		tencentType:    tencentyunTypeA,
 		signParam:      "sign",
 		timestampParam: "timestamp",

@@ -10,18 +10,9 @@ import (
 
 const chuangcacheSignPattern = "%s%s%d"
 
-var (
-	_ ucaInternal = (*chuangcache)(nil)
-	_ Uca         = (*chuangcache)(nil)
-)
+var _ ucaInternal = (*chuangcache)(nil)
 
-type chuangcache struct {
-	template ucaTemplate
-}
-
-func (c *chuangcache) Sign(original url.URL, opts ...signOption) (url url.URL, err error) {
-	return c.template.Sign(original, opts...)
-}
+type chuangcache struct{}
 
 func (c *chuangcache) sign(original url.URL, options *signOptions) (url url.URL, err error) {
 	now := time.Now().Unix()

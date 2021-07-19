@@ -64,3 +64,9 @@ func (s *optionSecret) applySign(options *signOptions) {
 	options.secret.Id = s.id
 	options.secret.Key = s.key
 }
+
+func (s *optionSecret) apply(options *options) {
+	options.ucaType = s.ucaType
+	options.secret.Id = s.id
+	options.secret.Key = s.key
+}

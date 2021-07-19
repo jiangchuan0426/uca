@@ -13,6 +13,10 @@ func Url(url string) *optionUrl {
 	}
 }
 
-func (s *optionUrl) applySign(options *signOptions) {
-	options.url = s.url
+func (u *optionUrl) applySign(options *signOptions) {
+	options.url = u.url
+}
+
+func (u *optionUrl) apply(options *options) {
+	options.url = u.url
 }

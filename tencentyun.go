@@ -25,21 +25,12 @@ const (
 	tencentyunTypeD tencentyunType = 4
 )
 
-var (
-	_ ucaInternal = (*tencentyun)(nil)
-	_ Uca         = (*tencentyun)(nil)
-)
+var _ ucaInternal = (*tencentyun)(nil)
 
 type (
 	tencentyunType uint8
-	tencentyun     struct {
-		template ucaTemplate
-	}
+	tencentyun     struct{}
 )
-
-func (t *tencentyun) Sign(original url.URL, opts ...signOption) (url url.URL, err error) {
-	return t.template.Sign(original, opts...)
-}
 
 func (t *tencentyun) sign(original url.URL, options *signOptions) (url url.URL, err error) {
 	switch options.tencentType {
