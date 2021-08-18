@@ -21,11 +21,6 @@ func (t *template) Sign(original *url.URL, opts ...signOption) (err error) {
 		original.RawQuery = ""
 	}
 
-	// 还原原始的路径，不然会引起问题（腾讯云CDN在英文路径下，不会做解码操作，会导致算出来的签名不一致而返回403）
-	if original.RawPath, err = url.QueryUnescape(original.RawPath); nil != err {
-		return
-	}
-
 	switch options.ucaType {
 	case TypeChuangcache:
 		err = t.changcache.sign(original, options)

@@ -50,7 +50,7 @@ func (t *tencentyun) sign(original *url.URL, options *signOptions) (err error) {
 
 func (t *tencentyun) signA(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Unix()
-	key := fmt.Sprintf(tencentyunSignPatternA, url.Path, now, xid.New().String(), options.key)
+	key := fmt.Sprintf(tencentyunSignPatternA, url.RawPath, now, xid.New().String(), options.key)
 
 	query := url.Query()
 	var sign string
@@ -65,33 +65,33 @@ func (t *tencentyun) signA(url *url.URL, options *signOptions) (err error) {
 
 func (t *tencentyun) signB(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Format("20060102150405")
-	key := fmt.Sprintf(tencentyunSignPatternB, options.key, now, url.Path)
+	key := fmt.Sprintf(tencentyunSignPatternB, options.key, now, url.RawPath)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
-	url.Path = fmt.Sprintf("%s%s%s", now, sign, url.Path)
+	url.RawPath = fmt.Sprintf("%s%s%s", now, sign, url.RawPath)
 
 	return
 }
 
 func (t *tencentyun) signC(url *url.URL, options *signOptions) (err error) {
 	now := strconv.FormatInt(time.Now().Unix(), 16)
-	key := fmt.Sprintf(tencentyunSignPatternC, options.key, url.Path, now)
+	key := fmt.Sprintf(tencentyunSignPatternC, options.key, url.RawPath, now)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
-	url.Path = fmt.Sprintf("%s%s%s", sign, now, url.Path)
+	url.RawPath = fmt.Sprintf("%s%s%s", sign, now, url.RawPath)
 
 	return
 }
 
 func (t *tencentyun) signD(url *url.URL, options *signOptions) (err error) {
 	nowHex := strconv.FormatInt(time.Now().Unix(), 16)
-	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.Path, nowHex)
+	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.RawPath, nowHex)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
