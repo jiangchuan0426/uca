@@ -10,11 +10,11 @@ import (
 
 const chuangcacheSignPattern = "%s%s%d"
 
-var _ ucaInternal = (*chuangcacheInternal)(nil)
+var _ executor = (*chuangcache)(nil)
 
-type chuangcacheInternal struct{}
+type chuangcache struct{}
 
-func (c *chuangcacheInternal) sign(url *url.URL, options *signOptions) (err error) {
+func (c *chuangcache) sign(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Unix()
 	key := fmt.Sprintf(chuangcacheSignPattern, options.key, url.Path, now)
 

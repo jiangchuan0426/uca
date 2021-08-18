@@ -4,7 +4,6 @@ import (
 	`fmt`
 	`net/url`
 	`strconv`
-	`strings`
 	`time`
 
 	`github.com/rs/xid`
@@ -25,14 +24,14 @@ const (
 	tencentyunTypeD tencentyunType = 4
 )
 
-var _ ucaInternal = (*tencentyunInternal)(nil)
+var _ executor = (*tencentyun)(nil)
 
 type (
-	tencentyunType     uint8
-	tencentyunInternal struct{}
+	tencentyunType uint8
+	tencentyun     struct{}
 )
 
-func (t *tencentyunInternal) sign(original *url.URL, options *signOptions) (err error) {
+func (t *tencentyun) sign(original *url.URL, options *signOptions) (err error) {
 	switch options.tencentType {
 	case tencentyunTypeA:
 		err = t.signA(original, options)
@@ -49,7 +48,7 @@ func (t *tencentyunInternal) sign(original *url.URL, options *signOptions) (err 
 	return
 }
 
-func (t *tencentyunInternal) signA(url *url.URL, options *signOptions) (err error) {
+func (t *tencentyun) signA(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Unix()
 	key := fmt.Sprintf(tencentyunSignPatternA, url.Path, now, xid.New().String(), options.key)
 
@@ -59,11 +58,12 @@ func (t *tencentyunInternal) signA(url *url.URL, options *signOptions) (err erro
 		return
 	}
 	query.Add("sign", sign)
+	url.RawQuery = query.Encode()
 
 	return
 }
 
-func (t *tencentyunInternal) signB(url *url.URL, options *signOptions) (err error) {
+func (t *tencentyun) signB(url *url.URL, options *signOptions) (err error) {
 	now := time.Now().Format("20060102150405")
 	key := fmt.Sprintf(tencentyunSignPatternB, options.key, now, url.Path)
 
@@ -76,8 +76,8 @@ func (t *tencentyunInternal) signB(url *url.URL, options *signOptions) (err erro
 	return
 }
 
-func (t *tencentyunInternal) signC(url *url.URL, options *signOptions) (err error) {
-	now := strings.ToUpper(strconv.FormatInt(time.Now().Unix(), 16))
+func (t *tencentyun) signC(url *url.URL, options *signOptions) (err error) {
+	now := strconv.FormatInt(time.Now().Unix(), 16)
 	key := fmt.Sprintf(tencentyunSignPatternC, options.key, url.Path, now)
 
 	var sign string
@@ -89,9 +89,9 @@ func (t *tencentyunInternal) signC(url *url.URL, options *signOptions) (err erro
 	return
 }
 
-func (t *tencentyunInternal) signD(url *url.URL, options *signOptions) (err error) {
-	now := strings.ToUpper(strconv.FormatInt(time.Now().Unix(), 16))
-	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.Path, now)
+func (t *tencentyun) signD(url *url.URL, options *signOptions) (err error) {
+	nowHex := strconv.FormatInt(time.Now().Unix(), 16)
+	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.Path, nowHex)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
@@ -100,7 +100,8 @@ func (t *tencentyunInternal) signD(url *url.URL, options *signOptions) (err erro
 
 	query := url.Query()
 	query.Add(options.signParam, sign)
-	query.Add(options.timestampParam, now)
+	query.Add(options.timestampParam, nowHex)
+	url.RawQuery = query.Encode()
 
 	return
 }

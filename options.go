@@ -4,12 +4,18 @@ import (
 	`github.com/storezhang/gox`
 )
 
-var defaultOptions = &options{}
+var defaultOptions = &options{
+	tencentType: tencentyunTypeD,
+	scheme:      gox.URISchemeHttps,
+	removeQuery: true,
+}
 
 type options struct {
-	ucaType Type
-	secret  gox.Secret
+	ucaType     Type
+	tencentType tencentyunType
 
-	domain string
-	key    string
+	scheme      gox.URIScheme
+	domain      string
+	key         string
+	removeQuery bool
 }

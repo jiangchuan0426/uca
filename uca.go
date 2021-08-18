@@ -15,8 +15,8 @@ func New(opts ...option) Uca {
 		opt.apply(defaultOptions)
 	}
 
-	return &ucaTemplate{
-		changcache: &chuangcacheInternal{},
-		tencentyun: &tencentyunInternal{},
+	return &template{
+		changcache: &chuangcache{},
+		tencentyun: &tencentyun{},
 	}
 }
