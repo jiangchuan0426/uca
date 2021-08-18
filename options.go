@@ -7,7 +7,7 @@ import (
 var defaultOptions = &options{
 	tencentType: tencentyunTypeD,
 	scheme:      gox.URISchemeHttps,
-	removeQuery: true,
+	removeQuery: false,
 }
 
 type options struct {
