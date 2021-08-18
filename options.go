@@ -7,15 +7,21 @@ import (
 var defaultOptions = &options{
 	tencentType: tencentyunTypeD,
 	scheme:      gox.URISchemeHttps,
-	removeQuery: false,
+
+	signParam:      "sign",
+	timestampParam: "t",
+	removeQuery:    false,
 }
 
 type options struct {
 	ucaType     Type
 	tencentType tencentyunType
 
-	scheme      gox.URIScheme
-	domain      string
-	key         string
-	removeQuery bool
+	scheme gox.URIScheme
+	domain string
+	key    string
+
+	signParam      string
+	timestampParam string
+	removeQuery    bool
 }
