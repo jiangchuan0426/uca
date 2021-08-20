@@ -9,7 +9,7 @@ type template struct {
 	tencentyun executor
 }
 
-func (t *template) Sign(original *url.URL, opts ...signOption) (err error) {
+func (t *template) Sign(url *url.URL, opts ...signOption) (err error) {
 	options := defaultSignOptions()
 	for _, opt := range opts {
 		opt.applySign(options)
@@ -18,17 +18,17 @@ func (t *template) Sign(original *url.URL, opts ...signOption) (err error) {
 	// 去掉请求参数，原因：
 	// 比如使用腾讯云CDN，原始存储使用COS，如果带上COS的请求参数，会导致报SecretKey不可用的错误
 	if options.removeQuery {
-		original.RawQuery = ""
+		url.RawQuery = ""
 	}
 
 	switch options.ucaType {
 	case TypeChuangcache:
-		err = t.changcache.sign(original, options)
+		err = t.changcache.sign(url, options)
 	case TypeTencentyun:
-		err = t.tencentyun.sign(original, options)
+		err = t.tencentyun.sign(url, options)
 	}
-	original.Scheme = string(options.scheme)
-	original.Host = options.domain
+	url.Scheme = string(options.scheme)
+	url.Host = options.domain
 
 	return
 }

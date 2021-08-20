@@ -21,17 +21,7 @@ func Chuangcache() *optionType {
 }
 
 // TencentyunTypeA 配置腾讯云授权
-func TencentyunTypeA() *optionType {
-	return &optionType{
-		ucaType:     TypeTencentyun,
-		tencentType: tencentyunTypeA,
-
-		signParam: "sign",
-	}
-}
-
-// TencentyunTypeAWithConfig 配置腾讯云授权
-func TencentyunTypeAWithConfig(sign string) *optionType {
+func TencentyunTypeA(sign string) *optionType {
 	return &optionType{
 		ucaType:     TypeTencentyun,
 		tencentType: tencentyunTypeA,
@@ -56,15 +46,7 @@ func TencentyunTypeC() *optionType {
 }
 
 // TencentyunTypeD 配置腾讯云授权
-func TencentyunTypeD() *optionType {
-	return &optionType{
-		ucaType:     TypeTencentyun,
-		tencentType: tencentyunTypeD,
-	}
-}
-
-// TencentyunTypeDWithConfig 配置腾讯云授权
-func TencentyunTypeDWithConfig(sign string, timestamp string) *optionType {
+func TencentyunTypeD(sign string, timestamp string) *optionType {
 	return &optionType{
 		ucaType:     TypeTencentyun,
 		tencentType: tencentyunTypeD,

@@ -49,8 +49,8 @@ func (t *tencentyun) sign(original *url.URL, options *signOptions) (err error) {
 }
 
 func (t *tencentyun) signA(url *url.URL, options *signOptions) (err error) {
-	now := time.Now().Unix()
-	key := fmt.Sprintf(tencentyunSignPatternA, url.RawPath, now, xid.New().String(), options.key)
+	nowHex := time.Now().Unix()
+	key := fmt.Sprintf(tencentyunSignPatternA, url.EscapedPath(), nowHex, xid.New().String(), options.key)
 
 	query := url.Query()
 	var sign string
@@ -64,34 +64,36 @@ func (t *tencentyun) signA(url *url.URL, options *signOptions) (err error) {
 }
 
 func (t *tencentyun) signB(url *url.URL, options *signOptions) (err error) {
-	now := time.Now().Format("20060102150405")
-	key := fmt.Sprintf(tencentyunSignPatternB, options.key, now, url.RawPath)
+	nowHex := time.Now().Format("20060102150405")
+	key := fmt.Sprintf(tencentyunSignPatternB, options.key, nowHex, url.EscapedPath())
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
-	url.RawPath = fmt.Sprintf("%s%s%s", now, sign, url.RawPath)
+	url.RawPath = fmt.Sprintf("%s/%s%s", nowHex, sign, url.EscapedPath())
+	url.Path = fmt.Sprintf("%s/%s%s", nowHex, sign, url.Path)
 
 	return
 }
 
 func (t *tencentyun) signC(url *url.URL, options *signOptions) (err error) {
-	now := strconv.FormatInt(time.Now().Unix(), 16)
-	key := fmt.Sprintf(tencentyunSignPatternC, options.key, url.RawPath, now)
+	nowHex := strconv.FormatInt(time.Now().Unix(), 16)
+	key := fmt.Sprintf(tencentyunSignPatternC, options.key, url.EscapedPath(), nowHex)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
 		return
 	}
-	url.RawPath = fmt.Sprintf("%s%s%s", sign, now, url.RawPath)
+	url.RawPath = fmt.Sprintf("/%s/%s%s", sign, nowHex, url.EscapedPath())
+	url.Path = fmt.Sprintf("/%s/%s%s", sign, nowHex, url.Path)
 
 	return
 }
 
 func (t *tencentyun) signD(url *url.URL, options *signOptions) (err error) {
 	nowHex := strconv.FormatInt(time.Now().Unix(), 16)
-	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.RawPath, nowHex)
+	key := fmt.Sprintf(tencentyunSignPatternD, options.key, url.EscapedPath(), nowHex)
 
 	var sign string
 	if sign, err = gox.Md5(key); nil != err {
